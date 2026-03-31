@@ -3,658 +3,1176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claude Code Setup Guide — Pocketbook Strategies</title>
+<title>Claude Code Setup Guide</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8f7f4;color:#1a1a1a;padding:24px 16px;font-size:14px;line-height:1.6}
-  .wrap{max-width:780px;margin:0 auto}
-  h1{font-size:22px;font-weight:600;margin-bottom:6px}
-  .sub{font-size:12px;color:#888;letter-spacing:.8px;margin-bottom:4px}
-  .intro{font-size:13px;color:#555;margin-bottom:18px}
+  :root {
+    --navy: #1a2744;
+    --navy-light: #243058;
+    --blue: #2e6be6;
+    --blue-light: #d6e4fb;
+    --cmd: #1e3a5f;
+    --cmd-text: #7dd3fc;
+    --you-bg: #fff3cd;
+    --you-text: #92400e;
+    --ok-bg: #d1fae5;
+    --ok-text: #065f46;
+    --warn-bg: #fef2f2;
+    --warn-text: #991b1b;
+    --note-bg: #eff6ff;
+    --note-text: #1e40af;
+    --gray: #f8fafc;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+    --font: 'Georgia', serif;
+    --mono: 'Courier New', monospace;
+  }
 
-  /* Legend */
-  .legend{display:flex;flex-wrap:wrap;gap:10px;background:#f1efe8;border:0.5px solid #b4b2a9;border-radius:10px;padding:12px 16px;margin-bottom:18px;align-items:center}
-  .legend-label{font-size:11px;font-weight:600;color:#666;margin-right:4px}
-  .leg-item{display:flex;align-items:center;gap:6px;font-size:12px}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Tags */
-  .cmd{font-family:monospace;font-size:12px;background:#e6f1fb;border:1.5px solid #185fa5;color:#185fa5;padding:1px 6px;border-radius:4px;display:inline-block;line-height:1.5;word-break:break-all}
-  .rep{font-family:monospace;font-size:12px;background:#faece7;border:1.5px solid #d85a30;color:#d85a30;padding:1px 6px;border-radius:4px;display:inline-block;line-height:1.5;word-break:break-all}
-  .ok{font-family:monospace;font-size:12px;background:#eaf3de;border:1.5px solid #3b6d11;color:#3b6d11;padding:1px 6px;border-radius:4px;display:inline-block;line-height:1.5;word-break:break-all}
+  body {
+    font-family: var(--font);
+    background: #f1f5f9;
+    color: var(--text);
+    line-height: 1.7;
+  }
 
-  /* Notes */
-  .note{display:flex;gap:10px;border-radius:8px;padding:10px 14px;margin:10px 0;align-items:flex-start}
-  .note-tip{background:#eeedfe;border:1.5px solid #afa9ec}
-  .note-warn{background:#faece7;border:1.5px solid #f09975}
-  .note-ok{background:#eaf3de;border:1.5px solid #97c459}
-  .note-info{background:#e6f1fb;border:1.5px solid #85b7eb}
-  .note b{font-size:10px;letter-spacing:.5px;white-space:nowrap;margin-top:2px;flex-shrink:0}
-  .note-tip b{color:#534ab7}
-  .note-warn b{color:#d85a30}
-  .note-ok b{color:#3b6d11}
-  .note-info b{color:#185fa5}
-  .note span{font-size:13px;line-height:1.65}
+  /* ── header ── */
 
-  /* Code blocks */
-  .cblock{background:#1a1a2e;border-radius:8px;padding:14px 16px;margin:10px 0;display:flex;flex-direction:column;gap:7px}
-  .cline{display:flex;flex-wrap:wrap;gap:3px;align-items:baseline;font-family:monospace;font-size:13px;color:#c9d1d9;line-height:1.5}
-  .cline .r{background:#faece7;border:1.5px solid #d85a30;color:#d85a30;padding:1px 5px;border-radius:4px}
-  .ccomment{font-family:monospace;font-size:12px;color:#666;line-height:1.5}
 
-  /* Steps */
-  .step{border:0.5px solid #ddd;border-radius:12px;margin-bottom:14px;overflow:hidden}
-  .step-head{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;background:#f5f5f3;user-select:none}
-  .step-head:hover{background:#eeede9}
-  .step-num{width:28px;height:28px;border-radius:50%;background:#185fa5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
-  .step-title{font-weight:600;font-size:14px;flex:1}
-  .step-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.3px}
-  .tag-install{background:#e1f5ee;color:#0f6e56}
-  .tag-setup{background:#eeedfe;color:#534ab7}
-  .tag-start{background:#faece7;color:#d85a30}
-  .step-arrow{color:#888;font-size:12px}
-  .step-body{padding:14px 18px;display:none}
-  .step-body.open{display:block}
+  .page-title {
+    background: white;
+    border-bottom: 3px solid var(--blue);
+    padding: 36px 40px 28px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
 
-  /* Howto */
-  .howto{border:1px solid #85b7eb;border-radius:8px;margin:8px 0;overflow:hidden}
-  .howto-head{display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;background:#e6f1fb;user-select:none}
-  .howto-head:hover{background:#d4e8f7}
-  .howto-label{font-size:11px;font-weight:700;color:#185fa5}
-  .howto-title{font-size:13px;color:#185fa5;flex:1}
-  .howto-arrow{font-size:11px;color:#185fa5}
-  .howto-body{padding:12px 14px;display:none;background:#fff}
-  .howto-body.open{display:block}
+  .page-title h1 {
+    font-size: 2rem;
+    color: var(--navy);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
 
-  /* Phrase cards */
-  .phrase{border:0.5px solid #ddd;border-radius:10px;margin-bottom:12px;overflow:hidden}
-  .phrase-top{padding:10px 14px;background:#e1f5ee;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-  .phrase-say{font-size:10px;font-weight:700;color:#0f6e56;flex-shrink:0}
-  .phrase-text{font-family:monospace;font-size:13px;color:#0f6e56;font-style:italic}
-  .phrase-body{padding:10px 14px;background:#fff}
-  .phrase-when{font-size:11px;font-weight:600;color:#888;margin-bottom:4px}
-  .phrase-desc{font-size:13px;line-height:1.65}
+  .page-title p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+  }
 
-  /* Dividers */
-  .divider{display:flex;align-items:center;gap:10px;margin:22px 0 14px}
-  .divider hr{flex:1;border:none;border-top:0.5px solid #ccc}
-  .divider span{font-size:11px;font-weight:600;color:#888;letter-spacing:1px;white-space:nowrap}
+  /* ── layout ── */
+  .wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 0 80px;
+  }
 
-  /* Trouble table */
-  .trouble{border:0.5px solid #ddd;border-radius:12px;overflow:hidden;margin-bottom:20px}
-  .trouble-head{padding:13px 18px;background:#f5f5f3;font-weight:600;font-size:14px}
-  .trouble-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:12px;padding:11px 18px;border-top:0.5px solid #eee}
-  .trouble-prob{font-family:monospace;font-size:11px;color:#d85a30;background:#faece7;padding:6px 10px;border-radius:6px;line-height:1.5}
-  .trouble-fix{font-size:12px;line-height:1.65;align-self:center}
+  /* ── color legend ── */
+  .legend {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--navy);
+    padding: 16px 24px;
+    margin: 24px 0 0;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+  }
 
-  /* Timeline */
-  .timeline{display:flex;flex-direction:column;gap:0}
-  .tl-row{display:flex;gap:12px}
-  .tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
-  .tl-dot{width:28px;height:28px;border-radius:50%;background:#0f6e56;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;z-index:1}
-  .tl-line{width:2px;flex:1;background:#ccc;min-height:16px}
-  .tl-content{padding-bottom:16px;padding-top:4px}
-  .tl-title{font-size:13px;font-weight:600}
-  .tl-detail{font-size:12px;color:#666;margin-top:2px;line-height:1.6}
+  .legend-label { font-weight: 700; color: var(--navy); margin-right: 8px; }
 
-  /* Checklist */
-  .checklist{border:0.5px solid #ddd;border-radius:12px;overflow:hidden}
-  .check-head{padding:13px 18px;background:#f5f5f3;display:flex;align-items:center;justify-content:space-between}
-  .check-head-title{font-weight:600;font-size:14px}
-  .check-progress-count{font-size:13px;color:#888;font-weight:500}
-  .progress-bar{height:4px;background:#ddd}
-  .progress-fill{height:100%;background:#3b6d11;transition:width .3s}
-  .check-item{display:flex;align-items:flex-start;gap:12px;padding:11px 18px;border-top:0.5px solid #eee;cursor:pointer;transition:background .15s}
-  .check-item.done{background:#eaf3de}
-  .check-box{width:17px;height:17px;border-radius:4px;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s}
-  .check-item.done .check-box{background:#3b6d11;border-color:#3b6d11;color:#fff}
-  .check-text{font-size:13px;line-height:1.6}
-  .check-item.done .check-text{text-decoration:line-through;color:#3b6d11}
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 3px; font-size: 12px;
+    font-family: var(--mono); font-weight: 700;
+  }
+  .chip-cmd  { background: var(--cmd);    color: var(--cmd-text); }
+  .chip-you  { background: var(--you-bg); color: var(--you-text); }
+  .chip-ok   { background: var(--ok-bg);  color: var(--ok-text);  }
 
-  /* Path builder */
-  .path-builder{background:#f8f7f4;border:1px solid #ccc;border-radius:10px;padding:14px 16px;margin:10px 0}
-  .path-builder label{font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px}
-  .path-builder input{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:6px;font-family:monospace;font-size:13px;background:#fff;margin-bottom:10px}
-  .path-builder input:focus{outline:2px solid #185fa5;border-color:#185fa5}
-  .path-output{background:#1a1a2e;border-radius:6px;padding:10px 12px;font-family:monospace;font-size:12px;color:#c9d1d9;word-break:break-all;min-height:32px;margin-top:4px}
-  .path-output .r{color:#d85a30}
-  .path-output .filled{color:#97c459}
-  .path-builder-note{font-size:11px;color:#888;margin-top:6px}
+  /* ── prefill tool ── */
+  .prefill-box {
+    background: var(--navy);
+    color: white;
+    padding: 28px 32px;
+    margin: 24px 0 0;
+  }
 
-  .footer{margin-top:16px;padding:12px 16px;background:#f1efe8;border-radius:10px;font-size:12px;color:#888;line-height:1.6}
+  .prefill-box h2 {
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #93c5fd;
+  }
 
-  ol,ul{padding-left:20px}
-  ol li,ul li{margin-bottom:4px}
-  p{margin-bottom:8px}
-  strong{font-weight:600}
+  .prefill-box p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+  }
+
+  .prefill-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media(max-width: 600px) { .prefill-grid { grid-template-columns: 1fr; } }
+
+  .prefill-field label {
+    display: block;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #93c5fd;
+    margin-bottom: 6px;
+  }
+
+  .prefill-field input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    color: white;
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .prefill-field input:focus {
+    border-color: #60a5fa;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .prefill-field input::placeholder { color: #475569; }
+
+  .prefill-result {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-left: 3px solid #60a5fa;
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .prefill-result .result-label {
+    font-size: 10px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #60a5fa;
+    margin-bottom: 6px;
+  }
+
+  .prefill-result .result-value {
+    color: #86efac;
+    word-break: break-all;
+  }
+
+  .prefill-result .result-empty { color: #475569; font-style: italic; }
+
+  .prefill-status {
+    margin-top: 12px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #475569;
+    transition: background 0.3s;
+  }
+  .status-dot.active { background: #4ade80; }
+
+  /* ── section parts ── */
+  .part-header {
+    background: var(--navy-light);
+    color: white;
+    padding: 12px 32px;
+    margin: 32px 0 0;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ── steps ── */
+  .step {
+    background: white;
+    border: 1px solid var(--border);
+    border-top: none;
+    overflow: hidden;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background 0.15s;
+  }
+  .step-header:hover { background: #f8fafc; }
+  .step-header.open { border-bottom-color: var(--border); }
+
+  .step-num {
+    background: var(--navy);
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    width: 56px;
+    min-width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-meta {
+    padding: 14px 20px;
+    flex: 1;
+  }
+
+  .step-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+
+  .step-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+  .step-badge.install { background: #fef3c7; color: #92400e; }
+  .step-badge.setup   { background: #f0fdf4; color: #166534; }
+  .step-badge.daily   { background: #fdf4ff; color: #6b21a8; }
+
+  .step-chevron {
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+  .step-chevron.open { transform: rotate(180deg); }
+
+  .step-body {
+    display: none;
+    padding: 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+  .step-body.open { display: block; }
+
+  .step-body p { margin-bottom: 12px; font-size: 0.95rem; }
+  .step-body ol, .step-body ul { margin: 10px 0 14px 20px; }
+  .step-body li { margin-bottom: 6px; font-size: 0.95rem; }
+
+  /* ── code blocks ── */
+  .cmd-block {
+    background: var(--cmd);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .cmd-line { display: block; }
+
+  /* username placeholders */
+  .u-fill {
+    color: #fbbf24;
+    font-weight: 700;
+  }
+  /* bash path placeholders */
+  .b-fill {
+    color: #86efac;
+    font-weight: 700;
+  }
+  /* static cmd text */
+  .cmd-static { color: var(--cmd-text); }
+  /* comment lines */
+  .cmd-comment { color: #64748b; }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 3px;
+    color: #94a3b8;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.18); color: white; }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* ── callout boxes ── */
+  .callout {
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 0.88rem;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .callout strong { font-weight: 700; display: block; margin-bottom: 4px; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .callout-warn    { background: var(--warn-bg); color: var(--warn-text); border-left: 3px solid #dc2626; }
+  .callout-note    { background: var(--note-bg); color: var(--note-text); border-left: 3px solid #2563eb; }
+  .callout-success { background: var(--ok-bg);   color: var(--ok-text);   border-left: 3px solid #16a34a; }
+
+  /* ── how-to boxes ── */
+  .howto {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--navy);
+    background: var(--gray);
+    margin: 16px 0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .howto-header {
+    padding: 10px 16px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .howto-header span.tag {
+    background: var(--navy); color: white;
+    font-size: 10px; padding: 1px 7px; border-radius: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .howto-body { padding: 14px 16px; border-top: 1px solid var(--border); }
+  .howto-body.hidden { display: none; }
+
+  /* ── daily workflow numbered ── */
+  .workflow-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .workflow-card {
+    background: var(--gray);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+  }
+  .workflow-card .wnum {
+    font-size: 22px; font-weight: 700; color: var(--navy);
+    font-family: Georgia, serif;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .workflow-card .wtitle { font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .workflow-card .wcmd  { font-family: var(--mono); font-size: 12px; color: var(--muted); word-break: break-all; }
+
+  /* ── phrases table ── */
+  .phrase-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+  .phrase-table th {
+    background: var(--navy); color: white;
+    font-family: Arial, sans-serif; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 14px; text-align: left;
+  }
+  .phrase-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .phrase-table tr:last-child td { border-bottom: none; }
+  .phrase-table tr:nth-child(even) td { background: var(--gray); }
+  .phrase-table .say { font-family: var(--mono); font-size: 12.5px; color: #1e40af; font-weight: 700; }
+
+  /* ── troubleshooting ── */
+  .trouble-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 12px 0; }
+  .trouble-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .trouble-table tr:last-child td { border-bottom: none; }
+  .trouble-table tr:nth-child(even) td { background: var(--gray); }
+  .trouble-table .prob { font-family: var(--mono); font-size: 12px; color: #dc2626; font-weight: 700; }
+  .trouble-table .fix  { font-family: Arial, sans-serif; color: var(--text); }
+
+  /* ── checklist ── */
+  .checklist { list-style: none; margin: 12px 0; }
+  .checklist li {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 9px 12px; border-bottom: 1px solid var(--border);
+    font-family: Arial, sans-serif; font-size: 14px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li:hover { background: #f1f5f9; }
+  .checklist li.checked { text-decoration: line-through; color: var(--muted); }
+  .checklist li.checked .chk { background: var(--ok-bg); border-color: #16a34a; color: #16a34a; }
+  .chk {
+    width: 20px; height: 20px; min-width: 20px;
+    border: 2px solid var(--border); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; margin-top: 1px;
+    transition: all 0.15s;
+  }
+
+  .checklist-counter {
+    font-family: Arial, sans-serif; font-size: 13px; color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .checklist-counter span { font-weight: 700; color: var(--navy); }
+
+  /* ── footer ── */
+  footer {
+    background: var(--navy);
+    color: #64748b;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px 32px;
+    margin-top: 0;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="sub">POCKETBOOK STRATEGIES — INTERNAL</div>
-  <h1>Claude Code setup guide</h1>
-  <p class="intro">Follow every step in order. Blue = type exactly as shown. Orange = replace with your own information. Green = expected result to read, not type. No coding experience needed.</p>
 
-  <div class="legend">
-    <span class="legend-label">Color key:</span>
-    <div class="leg-item"><span class="cmd">CMD</span> Type this exactly</div>
-    <div class="leg-item"><span class="rep">YOU</span> Replace with your info</div>
-    <div class="leg-item"><span class="ok">OK</span> Expected result — just read</div>
-  </div>
 
-  <div class="note note-warn"><b>IMPORTANT</b><span>Complete every step in order. Skipping ahead is the most common cause of errors.</span></div>
-
-  <!-- HOW TO boxes -->
-  <div class="howto">
-    <div class="howto-head" onclick="toggleHowto(this)">
-      <span class="howto-label">HOW TO</span>
-      <span class="howto-title">Close PowerShell and open it fresh</span>
-      <span class="howto-arrow">▼</span>
-    </div>
-    <div class="howto-body">
-      <p style="font-size:13px;margin-bottom:8px">You'll be told to do this several times. Here's exactly what it means:</p>
-      <ol style="font-size:13px;line-height:2.1">
-        <li>Click the <strong>X</strong> button in the top-right corner of the PowerShell window to close it completely</li>
-        <li>Press the <strong>Windows key</strong> on your keyboard</li>
-        <li>Type <span class="cmd">PowerShell</span> and press Enter</li>
-        <li>You now have a fresh window — continue with the next step</li>
-      </ol>
-      <div class="note note-tip" style="margin-top:10px"><b>NOTE</b><span>A fresh window is important because Windows only loads new settings when a window first opens. Changes don't take effect until you reopen it.</span></div>
+<div class="wrapper">
+  <div class="page-title">
+    <h1>Claude Code Setup Guide</h1>
+    <p>Follow every step in order. No coding experience needed.</p>
+    <div class="legend">
+      <span class="legend-label">Color key:</span>
+      <span class="chip chip-cmd">CMD</span> Type this exactly &nbsp;
+      <span class="chip chip-you">YOU</span> Replace with your info &nbsp;
+      <span class="chip chip-ok">OK</span> Expected result — just read
     </div>
   </div>
 
-  <div class="howto">
-    <div class="howto-head" onclick="toggleHowto(this)">
-      <span class="howto-label">HOW TO</span>
-      <span class="howto-title">Find your Windows username</span>
-      <span class="howto-arrow">▼</span>
+  <!-- ── HOW TO boxes ── -->
+  <div style="background:white;border:1px solid var(--border);border-top:none;padding:0 28px 4px;">
+    <div class="howto">
+      <div class="howto-header" onclick="toggleHowto(this)">
+        <span class="tag">HOW TO</span> Close PowerShell and open it fresh <span style="margin-left:auto">▼</span>
+      </div>
+      <div class="howto-body hidden">
+        <ol>
+          <li>Click the <strong>X</strong> button in the top-right corner of the PowerShell window to close it completely</li>
+          <li>Press the <strong>Windows key</strong> on your keyboard</li>
+          <li>Type <code>PowerShell</code> and press Enter</li>
+          <li>You now have a fresh window — continue with the next step</li>
+        </ol>
+        <div class="callout callout-note" style="margin-top:12px;"><strong>NOTE</strong>A fresh window is important because Windows only loads new settings when a window first opens.</div>
+      </div>
     </div>
-    <div class="howto-body">
-      <p style="font-size:13px;margin-bottom:8px">Several steps ask you to replace <span class="rep">YourName</span> with your actual Windows username. Here's how to find it:</p>
-      <ol style="font-size:13px;line-height:2.1">
-        <li>Open PowerShell</li>
-        <li>Type <span class="cmd">echo $env:USERNAME</span> and press Enter</li>
-        <li>The result that appears is your username — for example <span class="ok">NatalieTrent</span></li>
-      </ol>
-      <p style="font-size:13px;margin-top:8px">Everywhere you see <span class="rep">YourName</span> in this guide, replace it with that exact result. For example if your username is <span class="ok">NatalieTrent</span>, then <span class="rep">C:\Users\YourName</span> becomes <span class="cmd">C:\Users\NatalieTrent</span>.</p>
-    </div>
-  </div>
 
-  <!-- PATH BUILDER -->
-  <div class="howto">
-    <div class="howto-head" onclick="toggleHowto(this)">
-      <span class="howto-label">TOOL</span>
-      <span class="howto-title">Build your personal commands (fill in your name once)</span>
-      <span class="howto-arrow">▼</span>
-    </div>
-    <div class="howto-body">
-      <p style="font-size:13px;margin-bottom:10px">Type your Windows username and your Git path once here — the guide will fill them in for you throughout.</p>
-      <div class="path-builder">
-        <label>Your Windows username (e.g. NatalieTrent)</label>
-        <input type="text" id="pb-name" placeholder="NatalieTrent" oninput="updatePB()">
-        <label>Your Git path (paste the result of <span class="cmd">where.exe git</span> from Step 2)</label>
-        <input type="text" id="pb-git" placeholder="C:\Users\NatalieTrent\AppData\Local\Programs\Git\cmd\git.exe" oninput="updatePB()">
-        <label style="margin-top:4px">Your bash path (auto-built — this is what you'll use in Step 6):</label>
-        <div class="path-output" id="pb-bash">Fill in the fields above</div>
-        <p class="path-builder-note">This tool only runs in your browser — nothing is sent anywhere.</p>
+    <div class="howto">
+      <div class="howto-header" onclick="toggleHowto(this)">
+        <span class="tag">HOW TO</span> Find your Windows username <span style="margin-left:auto">▼</span>
+      </div>
+      <div class="howto-body hidden">
+        <ol>
+          <li>Open PowerShell</li>
+          <li>Type <code>echo $env:USERNAME</code> and press Enter</li>
+          <li>The result is your username — e.g. <strong>NatalieTrent</strong></li>
+        </ol>
+        <p style="margin-top:10px;font-family:Arial,sans-serif;font-size:14px;">Paste that into the <strong>Your Windows username</strong> field below — the whole guide will update automatically.</p>
       </div>
     </div>
   </div>
 
-  <div class="divider"><hr><span>PART 1 — PREREQUISITES</span><hr></div>
+  <!-- ── PREFILL TOOL ── -->
+  <div class="prefill-box">
+    <h2>⚡ Build your personal commands</h2>
+    <p>Fill in your details once — every command throughout this guide updates automatically so you can copy and paste without editing anything.</p>
 
-  <!-- STEP 1 -->
-  <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
-      <div class="step-num">1</div>
-      <span class="step-title">Open PowerShell and allow scripts</span>
-      <span class="step-tag tag-setup">SETUP</span>
-      <span class="step-arrow">▲</span>
+    <div class="prefill-grid">
+      <div class="prefill-field">
+        <label>Your Windows username (e.g. NatalieTrent)</label>
+        <input type="text" id="input-username" placeholder="NatalieTrent" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="prefill-field">
+        <label>Your Git path (paste result of <code style="font-size:12px;color:#93c5fd">where.exe git</code> from Step 2)</label>
+        <input type="text" id="input-gitpath" placeholder="C:\Users\NatalieTrent\AppData\Local\Programs\Git\cmd\git.exe" autocomplete="off" spellcheck="false">
+      </div>
     </div>
-    <div class="step-body open">
+
+    <div class="prefill-result">
+      <div class="result-label">Your Git Bash path (used in Step 6)</div>
+      <div id="bash-display" class="result-empty">Fill in the fields above to auto-generate</div>
+    </div>
+
+    <div class="prefill-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Enter your details above to personalise all commands</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PART 1 -->
+  <div class="part-header">PART 1 — PREREQUISITES</div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num">1</div>
+      <div class="step-meta">
+        <div class="step-title">Open PowerShell and allow scripts</div>
+        <span class="step-badge setup">SETUP</span>
+      </div>
+      <div class="step-chevron">▼</div>
+    </div>
+    <div class="step-body">
       <p>PowerShell is the text window where you type all the commands in this guide.</p>
-      <ol style="line-height:2.1;margin-bottom:10px">
+      <ol>
         <li>Press the <strong>Windows key</strong></li>
-        <li>Type <span class="cmd">PowerShell</span></li>
-        <li>Click <strong>Windows PowerShell</strong> — the plain one, NOT "Run as Administrator"</li>
+        <li>Type PowerShell</li>
+        <li>Click <strong>Windows PowerShell</strong> — the plain one, <strong>NOT</strong> "Run as Administrator"</li>
         <li>When it opens, type the command below exactly and press Enter:</li>
       </ol>
-      <div class="cblock"><div class="cline">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</div></div>
-      <p>When it asks a question, type <span class="cmd">Y</span> and press Enter.</p>
-      <div class="note note-warn"><b>IMPORTANT</b><span>Never open PowerShell as Administrator unless this guide specifically says so.</span></div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</span>
+      </div>
+      <p>When it asks a question, type <strong>Y</strong> and press Enter.</p>
+      <div class="callout callout-warn"><strong>IMPORTANT</strong>Never open PowerShell as Administrator unless this guide specifically says so.</div>
     </div>
   </div>
 
-  <!-- STEP 2 -->
+  <!-- Step 2 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">2</div>
-      <span class="step-title">Install Git</span>
-      <span class="step-tag tag-install">INSTALL</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Install Git</div>
+        <span class="step-badge install">INSTALL</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
+    <div class="step-body">
       <p>Git is required before Claude Code will work. Type this and press Enter:</p>
-      <div class="cblock"><div class="cline">winget install Git.Git</div></div>
-      <p>When it finishes, close PowerShell and open it fresh (see the "How to" box above). Then type this to confirm it worked:</p>
-      <div class="cblock"><div class="cline">git --version</div></div>
-      <div class="note note-ok"><b>SUCCESS</b><span>You should see something like: <span class="ok">git version 2.49.0.windows.1</span> — any version number means it worked.</span></div>
-      <div class="note note-warn"><b>IMPORTANT</b><span>If you see "git is not recognized" — close PowerShell and open it fresh again. This solves it almost every time.</span></div>
-      <p style="font-weight:600;margin-top:14px">Now find exactly where Git was installed — you'll need this in Step 6:</p>
-      <div class="cblock"><div class="cline">where.exe git</div></div>
-      <div class="note note-tip"><b>NOTE</b><span>Write down the result. It will look like <span class="ok">C:\Users\NatalieTrent\AppData\Local\Programs\Git\cmd\git.exe</span> — keep it handy. You need it in Step 6. You can also paste it into the "Build your personal commands" tool above.</span></div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">winget install Git.Git</span>
+      </div>
+      <p>When it finishes, close PowerShell and open it fresh. Then type this to confirm it worked:</p>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">git --version</span>
+      </div>
+      <div class="callout callout-success"><strong>SUCCESS</strong>You should see something like: <code>git version 2.49.0.windows.1</code> — any version number means it worked.</div>
+      <div class="callout callout-warn"><strong>IMPORTANT</strong>If you see "git is not recognized" — close PowerShell and open it fresh again. This solves it almost every time.</div>
+      <p>Now find exactly where Git was installed — you'll need this in Step 6:</p>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">where.exe git</span>
+      </div>
+      <div class="callout callout-note"><strong>NOTE</strong>Copy the result and paste it into the <strong>"Your Git path"</strong> field in the tool above. The guide will auto-build your bash path and pre-fill Step 6 for you.</div>
     </div>
   </div>
 
-  <!-- STEP 3 -->
+  <!-- Step 3 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">3</div>
-      <span class="step-title">Install Node.js</span>
-      <span class="step-tag tag-install">INSTALL</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Install Node.js</div>
+        <span class="step-badge install">INSTALL</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
+    <div class="step-body">
       <p>Node.js is required by several other tools. Type this and press Enter:</p>
-      <div class="cblock"><div class="cline">winget install OpenJS.NodeJS.LTS --scope user</div></div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">winget install OpenJS.NodeJS.LTS --scope user</span>
+      </div>
       <p>Close PowerShell and open it fresh. Then verify both of these:</p>
-      <div class="cblock"><div class="cline">node --version</div><div class="cline">npm --version</div></div>
-      <div class="note note-ok"><b>SUCCESS</b><span>You should see two version numbers — one for each command. That's all you need.</span></div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">node --version</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">npm --version</span>
+      </div>
+      <div class="callout callout-success"><strong>SUCCESS</strong>You should see two version numbers — one for each command.</div>
     </div>
   </div>
 
-  <!-- STEP 4 -->
+  <!-- Step 4 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">4</div>
-      <span class="step-title">Install VS Code (code editor)</span>
-      <span class="step-tag tag-install">INSTALL</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Install VS Code (code editor)</div>
+        <span class="step-badge install">INSTALL</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
+    <div class="step-body">
       <p>VS Code is where you'll read and review what Claude writes. You don't need to write code yourself.</p>
-      <ol style="line-height:2.1;margin-bottom:10px">
-        <li>Open your web browser and go to <span class="cmd">code.visualstudio.com</span></li>
+      <ol>
+        <li>Open your web browser and go to <strong>code.visualstudio.com</strong></li>
         <li>Click <strong>Download for Windows</strong></li>
         <li>Run the installer — on "Select Additional Tasks," <strong>check all boxes</strong></li>
         <li>Finish installation and open VS Code</li>
       </ol>
-      <p>Inside VS Code, press <span class="cmd">Ctrl+Shift+X</span> to open Extensions. Search for and install each of these:</p>
-      <ul style="line-height:2.1;margin:8px 0">
-        <li><span class="cmd">Prettier</span></li>
-        <li><span class="cmd">ESLint</span></li>
-        <li><span class="cmd">GitLens</span></li>
-        <li><span class="cmd">GitHub Pull Requests</span></li>
+      <p>Inside VS Code, press <strong>Ctrl+Shift+X</strong> to open Extensions. Search for and install each of these:</p>
+      <ul>
+        <li>Prettier</li>
+        <li>ESLint</li>
+        <li>GitLens</li>
+        <li>GitHub Pull Requests</li>
       </ul>
-      <div class="note note-tip"><b>NOTE</b><span>Do NOT install the Claude Code extension yet — install it after Step 6.</span></div>
+      <div class="callout callout-note"><strong>NOTE</strong>Do NOT install the Claude Code extension yet — install it after Step 6.</div>
     </div>
   </div>
 
-  <!-- STEP 5 -->
+  <!-- Step 5 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">5</div>
-      <span class="step-title">Set up GitHub and GitHub CLI</span>
-      <span class="step-tag tag-setup">SETUP</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Set up GitHub and GitHub CLI</div>
+        <span class="step-badge setup">SETUP</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
+    <div class="step-body">
       <p>GitHub stores your team's work online. GitHub CLI prevents password errors when saving your work.</p>
-      <ol style="line-height:2.1;margin-bottom:10px">
-        <li>Open your browser and go to <span class="cmd">github.com</span></li>
+      <ol>
+        <li>Open your browser and go to <strong>github.com</strong></li>
         <li>Create a free account and verify your email</li>
       </ol>
       <p>Back in PowerShell, install GitHub CLI:</p>
-      <div class="cblock"><div class="cline">winget install GitHub.cli</div></div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">winget install GitHub.cli</span>
+      </div>
       <p>Close PowerShell, open it fresh, then log in:</p>
-      <div class="cblock"><div class="cline">gh auth login</div></div>
-      <p style="margin-top:8px">It will ask questions. Answer like this:</p>
-      <ul style="line-height:2.1">
-        <li>Where do you use GitHub? → choose <span class="cmd">GitHub.com</span></li>
-        <li>Protocol? → choose <span class="cmd">HTTPS</span></li>
-        <li>Authenticate with browser? → type <span class="cmd">Y</span> and press Enter</li>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">gh auth login</span>
+      </div>
+      <p>It will ask questions. Answer like this:</p>
+      <ul>
+        <li>Where do you use GitHub? → choose <strong>GitHub.com</strong></li>
+        <li>Protocol? → choose <strong>HTTPS</strong></li>
+        <li>Authenticate with browser? → type <strong>Y</strong> and press Enter</li>
         <li>Complete the login in the browser that opens, then come back to PowerShell</li>
       </ul>
-      <div class="note note-ok"><b>SUCCESS</b><span>After this you'll never be asked for a GitHub password in the terminal again.</span></div>
+      <div class="callout callout-success"><strong>SUCCESS</strong>After this you'll never be asked for a GitHub password in the terminal again.</div>
     </div>
   </div>
 
-  <div class="divider"><hr><span>PART 2 — INSTALL CLAUDE CODE</span><hr></div>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PART 2 -->
+  <div class="part-header">PART 2 — INSTALL CLAUDE CODE</div>
 
-  <!-- STEP 6 -->
+  <!-- Step 6 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">6</div>
-      <span class="step-title">Install Claude Code — read the whole step before starting</span>
-      <span class="step-tag tag-install">INSTALL</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Install Claude Code — read the whole step before starting</div>
+        <span class="step-badge install">INSTALL</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
-      <div class="note note-warn"><b>IMPORTANT</b><span>This is where most installs go wrong. Read all the way through before typing anything.</span></div>
+    <div class="step-body">
+      <div class="callout callout-warn"><strong>IMPORTANT</strong>This is where most installs go wrong. Read all the way through before typing anything.</div>
 
-      <p style="font-weight:600;margin-top:14px">First — build your Git Bash path</p>
-      <p>In Step 2 you ran <span class="cmd">where.exe git</span> and got a path ending in <span class="ok">cmd\git.exe</span>. Change the end of that path from <span class="ok">cmd\git.exe</span> to <span class="ok">bin\bash.exe</span>.</p>
-      <div style="background:#f1efe8;border-radius:8px;padding:12px 14px;margin:8px 0;font-size:13px;line-height:1.9">
-        <div>What you have: <span class="ok">C:\Users\NatalieTrent\AppData\Local\Programs\Git\<strong>cmd\git.exe</strong></span></div>
-        <div>↓ Change the end to get:</div>
-        <div>What you need: <span class="ok">C:\Users\NatalieTrent\AppData\Local\Programs\Git\<strong>bin\bash.exe</strong></span></div>
+      <p><strong>First — your Git Bash path</strong></p>
+      <p>In Step 2 you ran <code>where.exe git</code> and got a path ending in <code>cmd\git.exe</code>. Change the end from <code>cmd\git.exe</code> to <code>bin\bash.exe</code>.</p>
+      <div class="callout callout-note"><strong>NOTE</strong>If you filled in the tool at the top of the page, your bash path is already shown there — and the commands below are pre-filled for you.</div>
+
+      <p style="margin-top:16px;"><strong>Second — set the path variable (do this BEFORE the installer)</strong></p>
+      <div class="cmd-block" id="step6-setenv">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-comment cmd-line"># Replace the path with YOUR actual bash path if not pre-filled</span>
+        <span class="cmd-line"><span class="cmd-static">$env:CLAUDE_CODE_GIT_BASH_PATH = "</span><span class="b-fill" data-type="bash">C:\Users\YourName\AppData\Local\Programs\Git\bin\bash.exe</span><span class="cmd-static">"</span></span>
       </div>
-      <div class="note note-tip"><b>NOTE</b><span>If you filled in the "Build your personal commands" tool above, your bash path is already shown there — copy it from there.</span></div>
+      <div class="callout callout-warn"><strong>IMPORTANT</strong>You MUST run this line BEFORE the installer below. If you skip it, the install looks successful but won't actually work.</div>
 
-      <p style="font-weight:600;margin-top:14px">Second — set the path variable (do this BEFORE the installer)</p>
-      <p>Replace the orange part with your actual bash path:</p>
-      <div class="cblock">
-        <div class="ccomment"># Replace the orange part with YOUR actual bash path</div>
-        <div class="cline">$env:CLAUDE_CODE_GIT_BASH_PATH = "<span class="r">C:\Users\YourName\AppData\Local\Programs\Git\bin\bash.exe</span>"</div>
+      <p style="margin-top:16px;"><strong>Third — run the installer</strong></p>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">irm https://claude.ai/install.ps1 | iex</span>
       </div>
-      <div class="note note-warn"><b>IMPORTANT</b><span>You MUST run this line BEFORE the installer below. If you skip it, the install looks successful but won't actually work.</span></div>
+      <div class="callout callout-success"><strong>SUCCESS</strong>A successful install shows: <code>✔ Claude Code successfully installed!</code> and a location ending in <code>\.local\bin\claude.exe</code></div>
 
-      <p style="font-weight:600;margin-top:14px">Third — run the installer</p>
-      <div class="cblock"><div class="cline">irm https://claude.ai/install.ps1 | iex</div></div>
-      <div class="note note-ok"><b>SUCCESS</b><span>A successful install shows: <span class="ok">✔ Claude Code successfully installed!</span> and a location ending in <span class="ok">\.local\bin\claude.exe</span></span></div>
-
-      <p style="font-weight:600;margin-top:14px">Fourth — make the settings permanent</p>
-      <p>Run both commands below. Replace orange parts with your username and your bash path:</p>
-      <div class="cblock">
-        <div class="ccomment"># Makes claude available every time you open PowerShell</div>
-        <div class="cline">[Environment]::SetEnvironmentVariable("PATH", "<span class="r">C:\Users\YourName</span>\.local\bin;" + [Environment]::GetEnvironmentVariable("PATH", "User"), "User")</div>
-        <div style="height:4px"></div>
-        <div class="ccomment"># Saves your Git Bash path permanently</div>
-        <div class="cline">[Environment]::SetEnvironmentVariable("CLAUDE_CODE_GIT_BASH_PATH", "<span class="r">C:\Users\YourName\AppData\Local\Programs\Git\bin\bash.exe</span>", "User")</div>
+      <p style="margin-top:16px;"><strong>Fourth — make the settings permanent</strong></p>
+      <p>Run both commands below. They are pre-filled with your details if you used the tool above:</p>
+      <div class="cmd-block" id="step6-path">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-comment cmd-line"># Makes claude available every time you open PowerShell</span>
+        <span class="cmd-line"><span class="cmd-static">[Environment]::SetEnvironmentVariable("PATH", "C:\Users\</span><span class="u-fill" data-type="username">YourName</span><span class="cmd-static">\.local\bin;" + [Environment]::GetEnvironmentVariable("PATH", "User"), "User")</span></span>
+      </div>
+      <div class="cmd-block" id="step6-bash">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-comment cmd-line"># Saves your Git Bash path permanently</span>
+        <span class="cmd-line"><span class="cmd-static">[Environment]::SetEnvironmentVariable("CLAUDE_CODE_GIT_BASH_PATH", "</span><span class="b-fill" data-type="bash">C:\Users\YourName\AppData\Local\Programs\Git\bin\bash.exe</span><span class="cmd-static">", "User")</span></span>
       </div>
 
-      <p style="font-weight:600;margin-top:14px">Fifth — restart PowerShell and verify</p>
+      <p style="margin-top:16px;"><strong>Fifth — restart PowerShell and verify</strong></p>
       <p>Close PowerShell completely and open it fresh. Then type:</p>
-      <div class="cblock"><div class="cline">claude --version</div></div>
-      <div class="note note-ok"><b>SUCCESS</b><span>You should see a version number like <span class="ok">claude 2.1.78</span>. Claude Code is fully installed.</span></div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude --version</span>
+      </div>
+      <div class="callout callout-success"><strong>SUCCESS</strong>You should see a version number like <code>claude 2.1.78</code>. Claude Code is fully installed.</div>
     </div>
   </div>
 
-  <!-- STEP 7 -->
+  <!-- Step 7 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">7</div>
-      <span class="step-title">Log in to Claude Code (one time)</span>
-      <span class="step-tag tag-setup">SETUP</span>
-      <span class="step-arrow">▲</span>
-    </div>
-    <div class="step-body open">
-      <p>Create a folder for your work and link Claude to your Anthropic account. Type each line one at a time, pressing Enter after each. Replace the orange parts with your Windows username:</p>
-      <div class="cblock">
-        <div class="cline">mkdir C:\Users\<span class="r">YourName</span>\Projects</div>
-        <div class="cline">cd C:\Users\<span class="r">YourName</span>\Projects</div>
-        <div class="cline">mkdir my-first-app</div>
-        <div class="cline">cd my-first-app</div>
-        <div class="cline">git init</div>
-        <div class="cline">claude</div>
+      <div class="step-meta">
+        <div class="step-title">Log in to Claude Code (one time)</div>
+        <span class="step-badge setup">SETUP</span>
       </div>
-      <p style="margin-top:10px">After you type <span class="cmd">claude</span> and press Enter, your web browser will open automatically to claude.ai. Sign in with your Anthropic account. Come back to PowerShell — you'll see the Claude Code welcome screen.</p>
-      <div class="note note-tip"><b>NOTE</b><span>Your login is saved. You won't need to do this again on this computer.</span></div>
+      <div class="step-chevron">▼</div>
+    </div>
+    <div class="step-body">
+      <p>Create a folder for your work and link Claude to your Anthropic account. Type each line one at a time, pressing Enter after each:</p>
+      <div class="cmd-block" id="step7-mkdir">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-line"><span class="cmd-static">mkdir C:\Users\</span><span class="u-fill" data-type="username">YourName</span><span class="cmd-static">\Projects</span></span>
+      </div>
+      <div class="cmd-block" id="step7-cd1">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-line"><span class="cmd-static">cd C:\Users\</span><span class="u-fill" data-type="username">YourName</span><span class="cmd-static">\Projects</span></span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">mkdir my-first-app</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">cd my-first-app</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">git init</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude</span>
+      </div>
+      <p>After you type <code>claude</code> and press Enter, your web browser will open automatically to claude.ai. Sign in with your Anthropic account. Come back to PowerShell — you'll see the Claude Code welcome screen.</p>
+      <div class="callout callout-note"><strong>NOTE</strong>Your login is saved. You won't need to do this again on this computer.</div>
     </div>
   </div>
 
-  <!-- STEP 8 -->
+  <!-- Step 8 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">8</div>
-      <span class="step-title">Install the Claude Code VS Code extension</span>
-      <span class="step-tag tag-setup">SETUP</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Install the Claude Code VS Code extension</div>
+        <span class="step-badge setup">SETUP</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
-      <ol style="line-height:2.1">
+    <div class="step-body">
+      <ol>
         <li>Open VS Code</li>
-        <li>Press <span class="cmd">Ctrl+Shift+X</span> to open Extensions</li>
-        <li>Search for <span class="cmd">Claude Code</span> and click Install</li>
-        <li>Once installed, press <span class="cmd">Ctrl+Esc</span> to open Claude inside VS Code</li>
+        <li>Press <strong>Ctrl+Shift+X</strong> to open Extensions</li>
+        <li>Search for <strong>Claude Code</strong> and click Install</li>
+        <li>Once installed, press <strong>Ctrl+Esc</strong> to open Claude inside VS Code</li>
       </ol>
-      <div class="note note-warn"><b>IMPORTANT</b><span>This extension only works if Steps 6 and 7 are complete first.</span></div>
+      <div class="callout callout-warn"><strong>IMPORTANT</strong>This extension only works if Steps 6 and 7 are complete first.</div>
     </div>
   </div>
 
-  <!-- STEP 9 -->
+  <!-- Step 9 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">9</div>
-      <span class="step-title">Add extra tools to Claude Code</span>
-      <span class="step-tag tag-install">INSTALL</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Add extra tools to Claude Code</div>
+        <span class="step-badge install">INSTALL</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
+    <div class="step-body">
       <p>These give Claude extra capabilities. Type each line one at a time — wait for each to finish before typing the next:</p>
-      <div class="cblock">
-        <div class="cline">claude mcp add playwright -- npx @anthropic-ai/mcp-playwright@latest</div>
-        <div class="cline">claude mcp add context7 -- npx @upstash/context7-mcp@latest</div>
-        <div class="cline">claude mcp add github -- npx @anthropic-ai/mcp-github@latest</div>
-        <div class="cline">claude mcp add supabase -- npx supabase-mcp@latest</div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude mcp add playwright -- npx @anthropic-ai/mcp-playwright@latest</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude mcp add context7 -- npx @upstash/context7-mcp@latest</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude mcp add github -- npx @anthropic-ai/mcp-github@latest</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude mcp add supabase -- npx supabase-mcp@latest</span>
       </div>
     </div>
   </div>
 
-  <div class="divider"><hr><span>PART 3 — YOUR FIRST PROJECT</span><hr></div>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PART 3 -->
+  <div class="part-header">PART 3 — YOUR FIRST PROJECT</div>
 
-  <!-- STEP 10 -->
+  <!-- Step 10 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">10</div>
-      <span class="step-title">How to start working with Claude each day</span>
-      <span class="step-tag tag-start">DAILY USE</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">How to start working with Claude each day</div>
+        <span class="step-badge daily">DAILY USE</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
+    <div class="step-body">
       <p>Every time you want to work on a project with Claude, do these three things:</p>
-      <p style="font-weight:600;margin-top:12px">Step A — Open PowerShell</p>
-      <ol style="line-height:2.1;margin-bottom:12px">
+
+      <p style="margin-top:14px;"><strong>Step A — Open PowerShell</strong></p>
+      <ol>
         <li>Press the <strong>Windows key</strong></li>
-        <li>Type <span class="cmd">PowerShell</span> and press Enter</li>
+        <li>Type PowerShell and press Enter</li>
       </ol>
-      <p style="font-weight:600">Step B — Navigate to your project folder</p>
-      <p>Replace the orange parts with your username and project folder name:</p>
-      <div class="cblock"><div class="cline">cd C:\Users\<span class="r">YourName</span>\Projects\<span class="r">your-project-name</span></div></div>
-      <div class="note note-tip"><b>NOTE</b><span>Not sure what to type for the project name? Open File Explorer and go to <span class="cmd">C:\Users\YourName\Projects</span> — the folder names there are what you'd type.</span></div>
-      <p style="font-weight:600;margin-top:12px">Step C — Start Claude</p>
-      <div class="cblock"><div class="cline">claude</div></div>
-      <p style="margin-top:8px">Claude will start up and show you a prompt. Type your instructions in plain English and press Enter. Claude will respond and ask for your approval before changing anything.</p>
-      <div class="note note-tip"><b>NOTE</b><span>Claude always asks before making changes. Read what it proposes, then type <span class="cmd">yes</span> or <span class="cmd">no</span>.</span></div>
+
+      <p style="margin-top:14px;"><strong>Step B — Navigate to your project folder</strong></p>
+      <p>Replace <code>your-project-name</code> with the actual folder name:</p>
+      <div class="cmd-block" id="step10-cd">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-line"><span class="cmd-static">cd C:\Users\</span><span class="u-fill" data-type="username">YourName</span><span class="cmd-static">\Projects\your-project-name</span></span>
+      </div>
+      <div class="callout callout-note"><strong>NOTE</strong>Not sure what to type for the project name? Open File Explorer and go to <code>C:\Users\<span class="u-fill" data-type="username">YourName</span>\Projects</code> — the folder names there are what you'd type.</div>
+
+      <p style="margin-top:14px;"><strong>Step C — Start Claude</strong></p>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude</span>
+      </div>
+      <div class="callout callout-note"><strong>NOTE</strong>Claude always asks before making changes. Read what it proposes, then type yes or no.</div>
     </div>
   </div>
 
-  <!-- STEP 11 -->
+  <!-- Step 11 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">11</div>
-      <span class="step-title">How to start a brand new project</span>
-      <span class="step-tag tag-start">DAILY USE</span>
-      <span class="step-arrow">▲</span>
-    </div>
-    <div class="step-body open">
-      <p>Use this when starting something completely new. Replace the orange part with your project name — no spaces, use dashes instead (e.g. <span class="ok">compliance-tracker</span>):</p>
-      <div class="cblock">
-        <div class="cline">cd C:\Users\<span class="r">YourName</span>\Projects</div>
-        <div class="cline">mkdir <span class="r">my-project-name</span></div>
-        <div class="cline">cd <span class="r">my-project-name</span></div>
-        <div class="cline">git init</div>
-        <div class="cline">claude</div>
+      <div class="step-meta">
+        <div class="step-title">How to start a brand new project</div>
+        <span class="step-badge daily">DAILY USE</span>
       </div>
-      <p style="margin-top:10px">Once Claude starts, introduce your project. Example opening message:</p>
-      <div style="background:#e1f5ee;border:1px solid #0f6e56;border-radius:8px;padding:12px 14px;margin:8px 0;font-style:italic;font-size:13px;color:#0f6e56;line-height:1.7">"I'm starting a new project. It's a [describe what it does in plain English]. I need you to help me plan and build it from scratch. Please ask me questions so you understand what I need before you start writing any code."</div>
+      <div class="step-chevron">▼</div>
+    </div>
+    <div class="step-body">
+      <p>Use this when starting something completely new. Replace <code>my-project-name</code> with your project name — no spaces, use dashes instead (e.g. <code>compliance-tracker</code>):</p>
+      <div class="cmd-block" id="step11-cd">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-line"><span class="cmd-static">cd C:\Users\</span><span class="u-fill" data-type="username">YourName</span><span class="cmd-static">\Projects</span></span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">mkdir my-project-name</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">cd my-project-name</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">git init</span>
+      </div>
+      <div class="cmd-block">
+        <button class="copy-btn" onclick="copyBlock(this)">Copy</button>
+        <span class="cmd-static">claude</span>
+      </div>
+      <p style="margin-top:12px;">Once Claude starts, introduce your project. Example opening message:</p>
+      <div class="cmd-block" style="background:#1a2744;">
+        <span style="color:#e2e8f0;font-style:italic;">"I'm starting a new project. It's a [describe what it does in plain English]. I need you to help me plan and build it from scratch. Please ask me questions so you understand what I need before you start writing any code."</span>
+      </div>
     </div>
   </div>
 
-  <!-- STEP 12 — PHRASES -->
+  <!-- Step 12 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">12</div>
-      <span class="step-title">Phrases to use with Claude — saving work and handing off</span>
-      <span class="step-tag tag-start">DAILY USE</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">Phrases to use with Claude — saving work and handing off</div>
+        <span class="step-badge daily">DAILY USE</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
-      <p style="margin-bottom:14px">These are the key phrases your team needs to know. Say them exactly like this inside a Claude session by typing them and pressing Enter.</p>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"commit everything and give me a handoff summary"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: end of your work session, or before you close PowerShell</div><div class="phrase-desc">This tells Claude to save all your work to Git with a description of what was done, then give you a written summary of where things stand so you or a teammate can pick up exactly where you left off. <strong>Always do this before closing PowerShell.</strong></div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"what's the status of this project?"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: starting a session and you want a recap</div><div class="phrase-desc">Claude will read your project files and give you a plain-English summary of what exists, what's done, and what still needs to happen.</div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"pick up where we left off"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: continuing work from a previous session</div><div class="phrase-desc">Say this after starting Claude in your project folder. Claude will review the recent history and handoff notes and resume from where you stopped.</div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"don't change anything yet — just tell me your plan first"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: before any big task</div><div class="phrase-desc">Claude will describe every step it plans to take and wait for your approval before touching a single file. Use this any time you're not sure what Claude is about to do.</div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"save a checkpoint"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: something is working and you don't want to lose it</div><div class="phrase-desc">Claude will commit your current working state to Git so you can always get back to this point, even if something breaks later.</div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"undo the last change"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: Claude did something you didn't want</div><div class="phrase-desc">Claude will revert the most recent change to your files. If it can't undo automatically, it will tell you exactly which files to restore.</div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"explain what this does in plain English"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: you see code or output you don't understand</div><div class="phrase-desc">Claude will translate anything technical into plain language. You can point at a specific file, a section of code, or just ask about the project generally.</div></div>
-      </div>
-
-      <div class="phrase">
-        <div class="phrase-top"><span class="phrase-say">SAY THIS</span><span class="phrase-text">"something broke — help me figure out what happened"</span></div>
-        <div class="phrase-body"><div class="phrase-when">When: anything stops working</div><div class="phrase-desc">Paste any error message after this phrase. Claude will read the error and your project files and tell you exactly what went wrong and how to fix it.</div></div>
-      </div>
+    <div class="step-body">
+      <p>These are the key phrases your team needs to know. Say them exactly like this inside a Claude session.</p>
+      <table class="phrase-table">
+        <thead><tr><th>Say this</th><th>When to use it</th></tr></thead>
+        <tbody>
+          <tr><td><span class="say">commit everything and give me a handoff summary</span></td><td>End of your work session, or before you close PowerShell. <strong>Always do this before closing.</strong></td></tr>
+          <tr><td><span class="say">what's the status of this project?</span></td><td>Starting a session and want a recap of where things stand.</td></tr>
+          <tr><td><span class="say">pick up where we left off</span></td><td>Continuing work from a previous session.</td></tr>
+          <tr><td><span class="say">don't change anything yet — just tell me your plan first</span></td><td>Before any big task — Claude will outline steps and wait for your approval.</td></tr>
+          <tr><td><span class="say">save a checkpoint</span></td><td>Something is working and you don't want to lose it.</td></tr>
+          <tr><td><span class="say">undo the last change</span></td><td>Claude did something you didn't want.</td></tr>
+          <tr><td><span class="say">explain what this does in plain English</span></td><td>You see code or output you don't understand.</td></tr>
+          <tr><td><span class="say">something broke — help me figure out what happened</span></td><td>Anything stops working. Paste any error message after this phrase.</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- STEP 13 -->
+  <!-- Step 13 -->
   <div class="step">
-    <div class="step-head" onclick="toggleStep(this)">
+    <div class="step-header" onclick="toggleStep(this)">
       <div class="step-num">13</div>
-      <span class="step-title">What a normal daily workflow looks like</span>
-      <span class="step-tag tag-start">DAILY USE</span>
-      <span class="step-arrow">▲</span>
+      <div class="step-meta">
+        <div class="step-title">What a normal daily workflow looks like</div>
+        <span class="step-badge daily">DAILY USE</span>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="step-body open">
-      <div class="timeline">
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">1</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Open PowerShell</div><div class="tl-detail">Windows key → type PowerShell → press Enter</div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">2</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Navigate to your project</div><div class="tl-detail">cd C:\Users\<span class="rep">YourName</span>\Projects\<span class="rep">your-project-name</span></div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">3</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Start Claude</div><div class="tl-detail">Type: <span class="cmd">claude</span> → press Enter</div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">4</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Get a recap</div><div class="tl-detail">Say: "what's the status of this project?"</div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">5</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Do your work</div><div class="tl-detail">Give Claude instructions in plain English. Review and approve each change.</div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">6</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Save a checkpoint if something's working</div><div class="tl-detail">Say: "save a checkpoint"</div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">7</div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">Before you finish for the day</div><div class="tl-detail">Say: "commit everything and give me a handoff summary"</div></div></div>
-        <div class="tl-row"><div class="tl-left"><div class="tl-dot">8</div></div><div class="tl-content"><div class="tl-title">Close PowerShell</div><div class="tl-detail">Click the X in the top-right corner</div></div></div>
+    <div class="step-body">
+      <div class="workflow-steps" id="workflow-cards">
+        <div class="workflow-card"><div class="wnum">1</div><div class="wtitle">Open PowerShell</div><div class="wcmd">Windows key → type PowerShell → press Enter</div></div>
+        <div class="workflow-card"><div class="wnum">2</div><div class="wtitle">Navigate to your project</div><div class="wcmd" id="wf-cd">cd C:\Users\<span class="u-fill" data-type="username">YourName</span>\Projects\your-project-name</div></div>
+        <div class="workflow-card"><div class="wnum">3</div><div class="wtitle">Start Claude</div><div class="wcmd">Type: claude → press Enter</div></div>
+        <div class="workflow-card"><div class="wnum">4</div><div class="wtitle">Get a recap</div><div class="wcmd">Say: "what's the status of this project?"</div></div>
+        <div class="workflow-card"><div class="wnum">5</div><div class="wtitle">Do your work</div><div class="wcmd">Give Claude instructions in plain English. Review and approve each change.</div></div>
+        <div class="workflow-card"><div class="wnum">6</div><div class="wtitle">Save a checkpoint</div><div class="wcmd">Say: "save a checkpoint"</div></div>
+        <div class="workflow-card"><div class="wnum">7</div><div class="wtitle">Before you finish</div><div class="wcmd">Say: "commit everything and give me a handoff summary"</div></div>
+        <div class="workflow-card"><div class="wnum">8</div><div class="wtitle">Close PowerShell</div><div class="wcmd">Click the X in the top-right corner</div></div>
       </div>
     </div>
   </div>
 
-  <div class="divider"><hr><span>PART 4 — TROUBLESHOOTING</span><hr></div>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PART 4 -->
+  <div class="part-header">PART 4 — TROUBLESHOOTING</div>
 
-  <div class="trouble">
-    <div class="trouble-head">Common problems and fixes</div>
-    <div class="trouble-row"><div class="trouble-prob">"claude" is not recognized</div><div class="trouble-fix">Close PowerShell completely (click X) and open a fresh window. This fixes it 90% of the time.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">"Unable to find CLAUDE_CODE_GIT_BASH_PATH"</div><div class="trouble-fix">Your bash path is wrong. Re-run Step 2 (where.exe git), rebuild the path changing cmd\git.exe to bin\bash.exe, and redo Step 6.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">"npm" or "node" is not recognized</div><div class="trouble-fix">Close PowerShell and open it fresh after installing Node.js in Step 3.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">"git" is not recognized</div><div class="trouble-fix">Close and reopen PowerShell. If still not working, re-run Step 2.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">"running scripts is disabled"</div><div class="trouble-fix">Re-run the Set-ExecutionPolicy command from Step 1.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">"Could not remove temporary file" warning</div><div class="trouble-fix">Harmless — just a leftover download file. Ignore it and continue.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">git push asks for a password</div><div class="trouble-fix">Run gh auth login (Step 5). GitHub no longer accepts passwords.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">Install looks done but claude still doesn't work</div><div class="trouble-fix">Run both SetEnvironmentVariable commands in Step 6 again, then close and reopen PowerShell.</div></div>
-    <div class="trouble-row"><div class="trouble-prob">I closed PowerShell without committing</div><div class="trouble-fix">Reopen PowerShell, cd back to your project folder, type claude, then say "what's the status of this project?" Claude can see uncommitted files.</div></div>
-  </div>
-
-  <div class="divider"><hr><span>PART 5 — CHECKLIST</span><hr></div>
-
-  <div class="checklist" id="checklist">
-    <div class="check-head">
-      <span class="check-head-title">Team member setup checklist</span>
-      <span class="check-progress-count" id="check-count">0/18 done</span>
+  <div class="step">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num" style="font-size:14px;width:56px;">?</div>
+      <div class="step-meta">
+        <div class="step-title">Common problems and fixes</div>
+      </div>
+      <div class="step-chevron">▼</div>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="step-body">
+      <table class="trouble-table">
+        <tbody>
+          <tr><td class="prob">"claude" is not recognized</td><td class="fix">Close PowerShell completely (click X) and open a fresh window. This fixes it 90% of the time.</td></tr>
+          <tr><td class="prob">Unable to find CLAUDE_CODE_GIT_BASH_PATH</td><td class="fix">Your bash path is wrong. Re-run Step 2 (<code>where.exe git</code>), update the tool at the top of this page, and redo Step 6.</td></tr>
+          <tr><td class="prob">"npm" or "node" is not recognized</td><td class="fix">Close PowerShell and open it fresh after installing Node.js in Step 3.</td></tr>
+          <tr><td class="prob">"git" is not recognized</td><td class="fix">Close and reopen PowerShell. If still not working, re-run Step 2.</td></tr>
+          <tr><td class="prob">running scripts is disabled</td><td class="fix">Re-run the Set-ExecutionPolicy command from Step 1.</td></tr>
+          <tr><td class="prob">"Could not remove temporary file" warning</td><td class="fix">Harmless — just a leftover download file. Ignore it and continue.</td></tr>
+          <tr><td class="prob">git push asks for a password</td><td class="fix">Run <code>gh auth login</code> (Step 5). GitHub no longer accepts passwords.</td></tr>
+          <tr><td class="prob">Install looks done but claude still doesn't work</td><td class="fix">Run both SetEnvironmentVariable commands in Step 6 again, then close and reopen PowerShell.</td></tr>
+          <tr><td class="prob">I closed PowerShell without committing</td><td class="fix">Reopen PowerShell, cd back to your project folder, type <code>claude</code>, then say "what's the status of this project?" Claude can see uncommitted files.</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="footer">Last updated March 2026 · Pocketbook Strategies · Questions? Contact Corbin Trent</div>
-</div>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PART 5 -->
+  <div class="part-header">PART 5 — CHECKLIST</div>
+
+  <div class="step">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num" style="font-size:13px;width:56px;">✓</div>
+      <div class="step-meta">
+        <div class="step-title">Team member setup checklist</div>
+        <div id="checklist-counter" class="checklist-counter" style="margin-top:4px;"><span>0</span>/18 done</div>
+      </div>
+      <div class="step-chevron">▼</div>
+    </div>
+    <div class="step-body" style="padding:16px 0;">
+      <ul class="checklist" id="checklist">
+        <li onclick="toggleCheck(this)"><div class="chk"></div>PowerShell open and script execution enabled (Set-ExecutionPolicy done)</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Git installed — <code>git --version</code> shows a number</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Git identity configured (name and email set)</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Node.js LTS installed — <code>node --version</code> works</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>npm working — <code>npm --version</code> works</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>VS Code installed with all recommended extensions</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>GitHub account created and email verified</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>GitHub CLI installed and authenticated (<code>gh auth login</code> done)</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Claude Code CLI installed — <code>claude --version</code> shows a number</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Claude Code authenticated (signed in via browser)</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Claude Code VS Code extension installed (Ctrl+Esc opens Claude)</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>All four MCP tools added (playwright, context7, github, supabase)</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Projects folder created and first project initialised</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Knows how to open PowerShell and navigate to a project</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Knows to type <code>claude</code> to start a session</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Knows to say "commit everything and give me a handoff summary" before closing</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Knows to say "don't change anything yet — just tell me your plan first" for big tasks</li>
+        <li onclick="toggleCheck(this)"><div class="chk"></div>Completed a test session — asked Claude to explain a project</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  Last updated March 2026 · Questions? Contact Corbin Trent
+</footer>
 
 <script>
-  function toggleStep(head){
-    var body=head.nextElementSibling;
-    var arrow=head.querySelector('.step-arrow');
-    var open=body.classList.toggle('open');
-    arrow.textContent=open?'▲':'▼';
-  }
-  function toggleHowto(head){
-    var body=head.nextElementSibling;
-    var arrow=head.querySelector('.howto-arrow');
-    var open=body.classList.toggle('open');
-    arrow.textContent=open?'▲':'▼';
+// ── PREFILL ENGINE ─────────────────────────────────────────────────
+const inputUsername = document.getElementById('input-username');
+const inputGitpath  = document.getElementById('input-gitpath');
+const bashDisplay   = document.getElementById('bash-display');
+const statusDot     = document.getElementById('status-dot');
+const statusText    = document.getElementById('status-text');
+
+let currentUsername = '';
+let currentBashPath = '';
+
+function buildBashPath(gitPath) {
+  if (!gitPath) return '';
+  // Replace cmd\git.exe with bin\bash.exe (handle both / and \)
+  return gitPath
+    .replace(/[\\\/]cmd[\\\/]git\.exe$/i, '\\bin\\bash.exe')
+    .replace(/[\\\/]cmd[\\\/]git$/i,      '\\bin\\bash.exe');
+}
+
+function updatePrefill() {
+  const username = inputUsername.value.trim();
+  const gitpath  = inputGitpath.value.trim();
+  const bashPath = buildBashPath(gitpath) ||
+    (username ? `C:\\Users\\${username}\\AppData\\Local\\Programs\\Git\\bin\\bash.exe` : '');
+
+  currentUsername = username;
+  currentBashPath = bashPath;
+
+  // Update bash path display
+  if (bashPath) {
+    bashDisplay.textContent = bashPath;
+    bashDisplay.className = 'result-value';
+  } else {
+    bashDisplay.textContent = 'Fill in the fields above to auto-generate';
+    bashDisplay.className = 'result-empty';
   }
 
-  var checkItems=[
-    "PowerShell open and script execution enabled (Step 1)",
-    "Git installed — git --version shows a number (Step 2)",
-    "Git path written down from where.exe git (Step 2)",
-    "Node.js installed — node --version and npm --version work (Step 3)",
-    "VS Code installed with Prettier, ESLint, GitLens, GitHub Pull Requests (Step 4)",
-    "GitHub account created and email verified (Step 5)",
-    "GitHub CLI installed and authenticated — gh auth login done (Step 5)",
-    "CLAUDE_CODE_GIT_BASH_PATH set permanently (Step 6)",
-    ".local\\bin added permanently to PATH (Step 6)",
-    "Claude Code installed — claude --version shows a number (Step 6)",
-    "Claude Code authenticated — signed in via browser (Step 7)",
-    "Claude Code VS Code extension installed and opens with Ctrl+Esc (Step 8)",
-    "MCP tools added: playwright, context7, github, supabase (Step 9)",
-    "Projects folder created at C:\\Users\\YourName\\Projects (Step 7)",
-    "First project folder created and git init run (Step 7)",
-    "First Claude session started successfully (Step 7)",
-    "Typed first message to Claude and got a response (Step 10)",
-    "Practiced the 'commit and handoff' phrase (Step 12)",
-  ];
-  var checked=checkItems.map(function(){return false});
-  var cl=document.getElementById('checklist');
-  checkItems.forEach(function(item,i){
-    var div=document.createElement('div');
-    div.className='check-item';
-    div.id='ci-'+i;
-    div.innerHTML='<div class="check-box" id="cb-'+i+'"></div><span class="check-text">'+item+'</span>';
-    div.onclick=function(){
-      checked[i]=!checked[i];
-      div.classList.toggle('done',checked[i]);
-      var cb=document.getElementById('cb-'+i);
-      cb.textContent=checked[i]?'✓':'';
-      var done=checked.filter(Boolean).length;
-      document.getElementById('check-count').textContent=done+'/'+checkItems.length+' done';
-      document.getElementById('progress-fill').style.width=Math.round(done/checkItems.length*100)+'%';
-      document.getElementById('check-count').style.color=done===checkItems.length?'#3b6d11':'#888';
-    };
-    cl.appendChild(div);
+  // Update status indicator
+  const filled = username && bashPath;
+  statusDot.classList.toggle('active', filled);
+  statusText.textContent = filled
+    ? '✓ All commands below are personalised — copy and paste without editing'
+    : username
+      ? 'Paste your Git path from Step 2 to complete setup'
+      : 'Enter your details above to personalise all commands';
+
+  // Update all username spans
+  document.querySelectorAll('.u-fill[data-type="username"]').forEach(el => {
+    el.textContent = username || 'YourName';
+    el.style.color = username ? '#fbbf24' : '#f87171';
   });
 
-  function updatePB(){
-    var name=document.getElementById('pb-name').value.trim();
-    var git=document.getElementById('pb-git').value.trim();
-    var out=document.getElementById('pb-bash');
-    if(!name&&!git){out.textContent='Fill in the fields above';return}
-    var bash='';
-    if(git){
-      bash=git.replace(/\\cmd\\git\.exe$/i,'\\bin\\bash.exe').replace(/\/cmd\/git\.exe$/i,'/bin/bash.exe');
-    } else if(name){
-      bash='C:\\Users\\'+name+'\\AppData\\Local\\Programs\\Git\\bin\\bash.exe';
-    }
-    if(name&&bash){
-      out.innerHTML='<span style="color:#97c459">'+bash.replace(/YourName/g,name)+'</span>';
-    } else {
-      out.innerHTML='<span style="color:#97c459">'+bash+'</span>';
-    }
-  }
+  // Update all bash path spans
+  document.querySelectorAll('.b-fill[data-type="bash"]').forEach(el => {
+    el.textContent = bashPath || 'C:\\Users\\YourName\\AppData\\Local\\Programs\\Git\\bin\\bash.exe';
+    el.style.color = bashPath ? '#86efac' : '#f87171';
+  });
+}
+
+inputUsername.addEventListener('input', updatePrefill);
+inputGitpath.addEventListener('input', updatePrefill);
+updatePrefill(); // init
+
+// ── COPY BUTTONS ──────────────────────────────────────────────────
+function copyBlock(btn) {
+  const block = btn.parentElement;
+  // Collect all text from the block (skip the button itself)
+  let text = '';
+  block.childNodes.forEach(node => {
+    if (node === btn) return;
+    text += node.textContent;
+  });
+  text = text.trim();
+
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── STEP ACCORDION ────────────────────────────────────────────────
+function toggleStep(header) {
+  const body     = header.nextElementSibling;
+  const chevron  = header.querySelector('.step-chevron');
+  const isOpen   = body.classList.contains('open');
+
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
+
+// ── HOWTO ACCORDION ───────────────────────────────────────────────
+function toggleHowto(header) {
+  const body  = header.nextElementSibling;
+  const arrow = header.querySelector('span:last-child');
+  const isOpen = !body.classList.contains('hidden');
+  body.classList.toggle('hidden', isOpen);
+  arrow.textContent = isOpen ? '▼' : '▲';
+}
+
+// ── CHECKLIST ─────────────────────────────────────────────────────
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+  li.querySelector('.chk').textContent = li.classList.contains('checked') ? '✓' : '';
+  updateCounter();
+}
+
+function updateCounter() {
+  const total   = document.querySelectorAll('#checklist li').length;
+  const checked = document.querySelectorAll('#checklist li.checked').length;
+  const counter = document.getElementById('checklist-counter');
+  counter.innerHTML = `<span>${checked}</span>/${total} done`;
+}
 </script>
 </body>
 </html>
