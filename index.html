@@ -1125,10 +1125,11 @@ updatePrefill(); // init
 // ── COPY BUTTONS ──────────────────────────────────────────────────
 function copyBlock(btn) {
   const block = btn.parentElement;
-  // Collect all text from the block (skip the button itself)
+  // Collect text, skipping the button and any comment lines
   let text = '';
   block.childNodes.forEach(node => {
     if (node === btn) return;
+    if (node.nodeType === 1 && node.classList.contains('cmd-comment')) return;
     text += node.textContent;
   });
   text = text.trim();
