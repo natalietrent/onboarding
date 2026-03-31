@@ -1125,14 +1125,16 @@ updatePrefill(); // init
 // ── COPY BUTTONS ──────────────────────────────────────────────────
 function copyBlock(btn) {
   const block = btn.parentElement;
-  // Collect text, skipping the button and any comment lines
-  let text = '';
-  block.childNodes.forEach(node => {
-    if (node === btn) return;
-    if (node.nodeType === 1 && node.classList.contains('cmd-comment')) return;
-    text += node.textContent;
+  // Only grab text from spans that are NOT comments and NOT the button
+  const lines = [];
+  block.querySelectorAll('span').forEach(span => {
+    // Skip comment spans
+    if (span.classList.contains('cmd-comment')) return;
+    // Skip spans that are children of other spans (already captured by parent)
+    if (span.parentElement !== block) return;
+    lines.push(span.textContent);
   });
-  text = text.trim();
+  const text = lines.join('').trim();
 
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = 'Copied!';
